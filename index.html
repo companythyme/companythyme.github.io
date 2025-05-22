@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Half of Summer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #1a202c; /* Darker text for headings */
+        }
+        h2 {
+            color: #2d3748; /* Slightly lighter dark text */
+        }
+        .section-card {
+            background-color: #edf2f7; /* Lighter background for sections */
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .input-group {
+            margin-bottom: 0.75rem;
+        }
+        label {
+            display: block; /* Make labels block for better spacing with textareas */
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid #cbd5e0;
+            resize: vertical;
+            font-size: 0.95rem;
+            color: #2d3748;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+        button {
+            background-color: #4299e1; /* Blue button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem; /* Added more margin to make it stand out */
+        }
+        button:hover {
+            background-color: #3182ce; /* Darker blue on hover */
+            transform: translateY(-2px);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .message-box {
+            background-color: #e0f2fe;
+            color: #2c5282;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            border: 1px solid #90cdf4;
+            display: none; /* Hidden by default */
+        }
+        .message-box.show {
+            display: block;
+        }
+        .info-box { /* New style for the information box */
+            background-color: #fffbeb; /* Light yellow background */
+            color: #92400e; /* Dark orange text */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #fcd34d; /* Yellow border */
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        /* Calendar specific styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); /* 7 columns for days of the week */
+            gap: 0.5rem; /* Space between days */
+            margin-top: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+        .calendar-day-header {
+            font-weight: 600;
+            text-align: center;
+            color: #2d3748;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #cbd5e0;
+        }
+        .calendar-day {
+            background-color: #f7fafc;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            text-align: center;
+            color: #4a5568;
+            font-size: 0.9rem;
+            min-height: 50px; /* Ensure a minimum height for each day cell */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+        }
+        .calendar-day.current-month {
+            font-weight: 500;
+            background-color: #ffffff;
+        }
+        .calendar-day-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 0.25rem;
+        }
+        .calendar-event {
+            font-size: 0.7rem; /* Slightly reduced font size for events */
+            color: #3182ce; /* Default event color (blueish) */
+            margin-top: 0.25rem;
+            line-height: 1.2;
+        }
+        .calendar-event.pink {
+            color: #db2777; /* Tailwind pink-600 */
+        }
+        .calendar-event.green {
+            color: #10b981; /* Tailwind emerald-500 */
+        }
+        .calendar-event.yellow {
+            color: #d97706; /* Tailwind amber-600 */
+        }
+        .calendar-event.blue {
+            color: #2563eb; /* Tailwind blue-700 */
+        }
+        .calendar-event.black { /* New class for black text */
+            color: #000000;
+        }
+        .calendar-event.purple { /* New class for purple text */
+            color: #8b5cf6; /* Tailwind violet-500 */
+        }
+        .calendar-event.orange { /* New class for orange text */
+            color: #f97316; /* Tailwind orange-500 */
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1 class="text-4xl font-bold text-center mb-8">First Half of Summer</h1>
+        <p class="text-center text-lg text-gray-600 mb-8">
+            Please fill out the following to help decide the first half of summer!
+        </p>
+
+        <form id="summerScheduleForm" class="space-y-6">
+
+            <div class="section-card">
+                <h2 class="text-2xl font-semibold mb-4"></h2>
+
+                <h3 class="text-xl font-medium mb-3 mt-6 text-gray-800">Calendar: Week 1 (June 1-7)</h3>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">1</span>
+                        <span class="calendar-event">Calvin Soccer Training at AZ (10am - 11:30)</span>
+                        <span class="calendar-event">Calvin Drop off at Camp High Harbor Lake Burton (2pm)</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">2</span>
+                        <span class="calendar-event">Calvin at Camp High Harbor</span>
+                        <span class="calendar-event pink">Julianna Cheer at CHS (9am - 2pm)</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">3</span>
+                        <span class="calendar-event">Calvin at Camp High Harbor</span>
+                        <span class="calendar-event pink">Julianna Cheer at CHS (9am - 2pm)</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">4</span>
+                        <span class="calendar-event green">Lewis Audiology (9am)</span>
+                        <span class="calendar-event pink">Julianna Cheer at CHS (9am - 2pm)</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">5</span>
+                        <span class="calendar-event">Calvin at Camp High Harbor</span>
+                        </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">6</span>
+                        <span class="calendar-event blue">Calvin at ODP TX</span>
+                        <span class="calendar-event">Calvin Early Pick-up from Camp High Harbor Lake Burton (8am)</span>
+                        <span class="calendar-event">Calvin & Papa G ATL - DFW AA 820 @ 12:36pm</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">7</span>
+                        <span class="calendar-event yellow">Aunt Zan Funeral in Columbus OH (10am)</span>
+                    </div>
+                </div>
+
+                <div class="input-group mt-6">
+                    <label class="block text-gray-700 font-medium mb-2">Do you want to go to Aunt Zan's funeral?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="auntZanFuneral" value="Yes" id="auntZanFuneralYes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="auntZanFuneral" value="No" id="auntZanFuneralNo"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div id="auntZanTravelQuestion" class="input-group mt-4" style="display: none;">
+                    <label class="block text-gray-700 font-medium mb-2">When do you want to leave (6th or 7th)?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="auntZanLeaveDate" value="June 6th" id="auntZanLeave6th"> June 6th
+                        </label>
+                        <label>
+                            <input type="radio" name="auntZanLeaveDate" value="June 7th" id="auntZanLeave7th"> June 7th
+                        </label>
+                    </div>
+                </div>
+
+                <div id="auntZanReturnQuestion" class="input-group mt-4" style="display: none;">
+                    <label class="block text-gray-700 font-medium mb-2">When do you want to come home (7th or 8th)?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="auntZanReturnDate" value="June 7th"> June 7th
+                        </label>
+                        <label>
+                            <input type="radio" name="auntZanReturnDate" value="June 8th"> June 8th
+                        </label>
+                    </div>
+                </div>
+
+                <div id="chrisMeetUpQuestion" class="input-group mt-4" style="display: none;">
+                    <label class="block text-gray-700 font-medium mb-2">Should Chris meet up with Calvin and Papa G in Texas?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="chrisMeetUp" value="Yes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="chrisMeetUp" value="No"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div id="week1ConcernsQuestion" class="input-group mt-4">
+                    <label class="block text-gray-700 font-medium mb-2">Do you have any additional concerns regarding Week 1?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="week1Concerns" value="Yes" id="week1ConcernsYes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="week1Concerns" value="No" id="week1ConcernsNo"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div id="week1ConcernsTextBox" class="input-group mt-4" style="display: none;">
+                    <label for="week1ConcernsText">Please describe your concerns:</label>
+                    <textarea id="week1ConcernsText" name="week1ConcernsText" placeholder="Type your concerns here..."></textarea>
+                </div>
+
+
+                <h3 class="text-xl font-medium mb-3 mt-6 text-gray-800">Calendar: Week 2 (June 8-14)</h3>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">8</span>
+                        <span class="calendar-event blue">Calvin at ODP TX</span>
+                        <span class="calendar-event">Calvin & Papa G DFW - ATL AA 3212 @ 6:49pm</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">9</span>
+                        <span class="calendar-event pink">Julianna Ortho @ 8:15am</span>
+                        <span class="calendar-event pink">Julianna Cheer at CHS (9am - 2pm)</span>
+                        <span class="calendar-event black">Chris Retina (2pm)</span> </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">10</span>
+                        <span class="calendar-event pink">Julianna Cheer Camp</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">11</span>
+                        <span class="calendar-event pink">Julianna Cheer Camp</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">12</span>
+                        <span class="calendar-event pink">Julianna Cheer Camp</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">13</span>
+                        <span class="calendar-event pink">Julianna Cheer Camp</span>
+                        <span class="calendar-event blue">Leave for Soccer Nationals</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">14</span>
+                        <span class="calendar-event">Soccer Nationals in NJ</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:space-x-8">
+                    <div class="md:w-1/2">
+                        <div class="input-group mt-6">
+                            <label class="block text-gray-700 font-medium mb-2">Do you want to go to Nationals?</label>
+                            <div class="flex space-x-4">
+                                <label>
+                                    <input type="radio" name="goToNationals" value="Yes" id="goToNationalsYes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="goToNationals" value="No" id="goToNationalsNo"> No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="vanTravelQuestion" class="input-group mt-4" style="display: none;">
+                            <label for="vanTravelText" class="block text-gray-700 font-medium mb-2">How do you want the van to get to Michigan?</label>
+                            <textarea id="vanTravelText" name="vanTravelText" placeholder="Type your preferred method for the van..."></textarea>
+                        </div>
+
+                        <div id="nationalsNoFollowUp" class="input-group mt-4" style="display: none;">
+                            <label class="block text-gray-700 font-medium mb-2">
+                                Do you like the idea of driving to Knoxville and waiting until you find out if Calvin will play on Tuesday or Wednesday, at which point we would meet either Monday, Tuesday, or Wednesday in Cincinnati (4-hour drive from Knoxville) on that day? Spend the night there and then continue our drive to CSA in Michigan the next morning.
+                            </label>
+                            <div class="flex space-x-4">
+                                <label>
+                                    <input type="radio" name="nationalsNoResponse" value="Yes" id="nationalsNoResponseYes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="nationalsNoResponse" value="No" id="nationalsNoResponseNo"> No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="michiganTravelQuestion" class="input-group mt-4" style="display: none;">
+                            <label for="michiganTravelText" class="block text-gray-700 font-medium mb-2">How would you like to get to Michigan?</label>
+                            <textarea id="michiganTravelText" name="michiganTravelText" placeholder="Type your preferred travel method..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="md:w-1/2 mt-6 md:mt-0">
+                        <div class="info-box">
+                            <p class="font-semibold">Important Note:</p>
+                            <p>It was my initial dream for this to be a big road trip for the whole family from ATL to AC to CSA, but the timing of the game on Saturday have made that impossible. If you don't want to go any longer I'm okay with that.</p>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-xl font-medium mb-3 mt-6 text-gray-800">Calendar: Week 3 (June 15-21)</h3>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">15</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">16</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">17</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">18</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">19</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">20</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">21</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:space-x-8">
+                    <div class="md:w-1/2">
+                        <div class="input-group mt-6">
+                            <label class="block text-gray-700 font-medium mb-2">Do you want Renn to come to the CSA?</label>
+                            <div class="flex space-x-4">
+                                <label>
+                                    <input type="radio" name="rennToCSA" value="Yes" id="rennToCSAYes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="rennToCSA" value="No" id="rennToCSANo"> No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="rennDurationQuestion" class="input-group mt-4" style="display: none;">
+                            <label for="rennDurationText" class="block text-gray-700 font-medium mb-2">For how long?</label>
+                            <textarea id="rennDurationText" name="rennDurationText" placeholder="e.g., 1 week, until July 1st, for the whole time..."></textarea>
+                        </div>
+
+                        <div id="halcrowsToCSAQuesiton" class="input-group mt-4">
+                            <label class="block text-gray-700 font-medium mb-2">Do you want the Halcrow's to come to the CSA?</label>
+                            <div class="flex space-x-4">
+                                <label>
+                                    <input type="radio" name="halcrowsToCSA" value="Yes" id="halcrowsToCSAYes"> Yes
+                                </label>
+                                <label>
+                                    <input type="radio" name="halcrowsToCSA" value="No" id="halcrowsToCSANo"> No
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="halcrowsDurationQuestion" class="input-group mt-4" style="display: none;">
+                            <label for="halcrowsDurationText" class="block text-gray-700 font-medium mb-2">For how long?</label>
+                            <textarea id="halcrowsDurationText" name="halcrowsDurationText" placeholder="e.g., 1 week, until July 1st, for the whole time..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="md:w-1/2 mt-6 md:mt-0">
+                        <div class="info-box">
+                            <p class="font-semibold">Important Note:</p>
+                            <p>Chris, Jonny and Eric are planning their annual pilgrimage to Las Vegas June 20th - 22nd. The reason for these dates are that they align with Juneteenth vacation time, Eric's Birthday & WSOP. The original thought was that if the Halcrow's came to the CSA that Jonny and I could fly from Traverse City together and Kate and Emmy could fly home from there at the end of their stay.</p>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="text-xl font-medium mb-3 mt-6 text-gray-800">Calendar: Week 4 (June 22-28)</h3>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">22</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">23</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">24</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">25</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">26</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">27</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">28</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-medium mb-3 mt-6 text-gray-800">Calendar: Week 5 (June 29-July 5)</h3>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">29</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">30</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">1</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                        <span class="calendar-event black">Chris Back to CSA</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">2</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">3</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">4</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">5</span>
+                        <span class="calendar-event green">CSA Cottage</span>
+                        <span class="calendar-event purple">Stay with Udo</span>
+                        <span class="calendar-event blue">Calvin GRR to MCO with Papa G</span>
+                    </div>
+                </div>
+
+                <div class="input-group mt-6">
+                    <label class="block text-gray-700 font-medium mb-2">Will you call Anna to find out if they are backing out of going to Michigan this year (rumor is she doesn't want to go?)</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="callAnna" value="Yes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="callAnna" value="No"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div class="input-group mt-6">
+                    <label class="block text-gray-700 font-medium mb-2">Does Julianna want to go to cousin camp?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="juliannaCousinCamp" value="Yes" id="juliannaCousinCampYes"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="juliannaCousinCamp" value="No" id="juliannaCousinCampNo"> No
+                        </label>
+                    </div>
+                </div>
+
+                <div id="juliannaCousinCampYesFollowUp" class="input-group mt-4" style="display: none;">
+                    <label class="block text-gray-700 font-medium mb-2">Can she stay the whole time or needs to fly back early?</label>
+                    <div class="flex space-x-4">
+                        <label>
+                            <input type="radio" name="juliannaCousinCampDuration" value="Whole time" id="juliannaCousinCampDurationWhole"> Whole time
+                        </label>
+                        <label>
+                            <input type="radio" name="juliannaCousinCampDuration" value="Fly back early" id="juliannaCousinCampDurationEarly"> Fly back early
+                        </label>
+                    </div>
+                </div>
+
+                <div id="juliannaFlyBackDayQuestion" class="input-group mt-4" style="display: none;">
+                    <label for="juliannaFlyBackDay" class="block text-gray-700 font-medium mb-2">What day would she fly back?</label>
+                    <input type="text" id="juliannaFlyBackDay" name="juliannaFlyBackDay" class="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., July 10th">
+                </div>
+
+                <div id="juliannaCousinCampNoFollowUp" class="input-group mt-4" style="display: none;">
+                    <label class="block text-gray-700 font-medium mb-2">Why not?</label>
+                    <div class="flex flex-col space-y-2">
+                        <label>
+                            <input type="radio" name="juliannaCousinCampReason" value="Can't stay entire time"> Can't stay the entire time
+                        </label>
+                        <label>
+                            <input type="radio" name="juliannaCousinCampReason" value="Has a conflict"> Has a conflict
+                        </label>
+                        <label>
+                            <input type="radio" name="juliannaCousinCampReason" value="Doesn't want to go"> Just doesn't want to go
+                        </label>
+                    </div>
+                </div>
+                <h3 class="text-xl font-medium mb-3 mt-6 text-gray-800">Calendar: Week 6 (July 6-12)</h3>
+                <div class="calendar-grid">
+                    <div class="calendar-day-header">Sun</div>
+                    <div class="calendar-day-header">Mon</div>
+                    <div class="calendar-day-header">Tue</div>
+                    <div class="calendar-day-header">Wed</div>
+                    <div class="calendar-day-header">Thu</div>
+                    <div class="calendar-day-header">Fri</div>
+                    <div class="calendar-day-header">Sat</div>
+
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">6</span>
+                        <span class="calendar-event black">Return Home</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">7</span>
+                        <span class="calendar-event orange">Lewis Paddle Board Camp 9am-12pm</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">8</span>
+                        <span class="calendar-event orange">Lewis Paddle Board Camp 9am-12pm</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">9</span>
+                        <span class="calendar-event orange">Lewis Paddle Board Camp 9am-12pm</span>
+                        <span class="calendar-event yellow">Rachael In Town</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">10</span>
+                        <span class="calendar-event orange">Lewis Paddle Board Camp 9am-12pm</span>
+                        <span class="calendar-event yellow">Rachael In Town</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">11</span>
+                        <span class="calendar-event orange">Lewis Paddle Board Camp 9am-12pm</span>
+                        <span class="calendar-event yellow">Rachael In Town</span>
+                    </div>
+                    <div class="calendar-day current-month">
+                        <span class="calendar-day-number">12</span>
+                        <span class="calendar-event yellow">Rachael In Town</span>
+                    </div>
+                </div>
+
+                <div class="input-group mt-6">
+                    <label for="missingInfo" class="block text-gray-700 font-medium mb-2">Is there anything that I'm missing or need to know about?</label>
+                    <textarea id="missingInfo" name="missingInfo" placeholder="Type any additional information here..."></textarea>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit">Save Summer Plan</button>
+            </div>
+        </form>
+
+        <div id="messageBox" class="message-box">
+            <p>Your summer schedule has been saved!</p>
+            <p>You can view your entries in the browser's console (F12).</p>
+            <p>In a real application, this data would be sent to a server to be emailed.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('summerScheduleForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const scheduleEntries = {};
+
+            // Iterate over all form elements
+            for (let [name, value] of formData.entries()) {
+                // Handle multiple values for the same name (e.g., radio buttons, checkboxes if they were multi-select)
+                if (scheduleEntries[name]) {
+                    if (!Array.isArray(scheduleEntries[name])) {
+                        scheduleEntries[name] = [scheduleEntries[name]];
+                    }
+                    scheduleEntries[name].push(value);
+                } else {
+                    scheduleEntries[name] = value;
+                }
+            }
+
+            // Display the message box
+            const messageBox = document.getElementById('messageBox');
+            messageBox.classList.add('show');
+
+            // Log the schedule entries to the console
+            console.log("Summer Schedule Entries:", scheduleEntries);
+
+            // --- Simulated Email Submission ---
+            // In a real application, you would send 'scheduleEntries' to a server-side endpoint.
+            // The server-side script would then use an email service (like SendGrid, Mailgun, or NodeMailer)
+            // to send the email to boedeker@gmail.com.
+            const emailRecipient = "boedeker@gmail.com";
+            const submissionEndpoint = "/api/submit-schedule"; // This is a placeholder endpoint
+
+            try {
+                // Simulate sending data to a server
+                const response = await fetch(submissionEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        to: emailRecipient,
+                        subject: "Summer Schedule Planner Submission",
+                        body: JSON.stringify(scheduleEntries, null, 2) // Pretty print JSON for email body
+                    }),
+                });
+
+                // You would typically check response.ok and handle success/failure here
+                if (response.ok) {
+                    console.log(`Data successfully sent to ${submissionEndpoint} for email to ${emailRecipient}.`);
+                } else {
+                    console.error(`Failed to send data to ${submissionEndpoint}. Status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("Error during simulated submission:", error);
+            }
+            // --- End Simulated Email Submission ---
+        });
+
+        // JavaScript for conditional question display
+        const auntZanFuneralYes = document.getElementById('auntZanFuneralYes');
+        const auntZanFuneralNo = document.getElementById('auntZanFuneralNo');
+        const auntZanTravelQuestion = document.getElementById('auntZanTravelQuestion');
+        const auntZanReturnQuestion = document.getElementById('auntZanReturnQuestion');
+        const chrisMeetUpQuestion = document.getElementById('chrisMeetUpQuestion');
+        const week1ConcernsQuestion = document.getElementById('week1ConcernsQuestion');
+        const week1ConcernsYes = document.getElementById('week1ConcernsYes');
+        const week1ConcernsTextBox = document.getElementById('week1ConcernsTextBox');
+
+        const auntZanLeave6th = document.getElementById('auntZanLeave6th');
+        const auntZanLeave7th = document.getElementById('auntZanLeave7th');
+
+        const goToNationalsYes = document.getElementById('goToNationalsYes');
+        const goToNationalsNo = document.getElementById('goToNationalsNo');
+        const nationalsNoFollowUp = document.getElementById('nationalsNoFollowUp');
+        const nationalsNoResponseYes = document.getElementById('nationalsNoResponseYes');
+        const nationalsNoResponseNo = document.getElementById('nationalsNoResponseNo');
+        const michiganTravelQuestion = document.getElementById('michiganTravelQuestion');
+        const michiganTravelText = document.getElementById('michiganTravelText');
+        const vanTravelQuestion = document.getElementById('vanTravelQuestion');
+        const vanTravelText = document.getElementById('vanTravelText');
+
+        const rennToCSAYes = document.getElementById('rennToCSAYes');
+        const rennToCSANo = document.getElementById('rennToCSANo');
+        const rennDurationQuestion = document.getElementById('rennDurationQuestion');
+        const rennDurationText = document.getElementById('rennDurationText');
+
+        const halcrowsToCSAQuesiton = document.getElementById('halcrowsToCSAQuesiton');
+        const halcrowsToCSAYes = document.getElementById('halcrowsToCSAYes');
+        const halcrowsToCSANo = document.getElementById('halcrowsToCSANo');
+        const halcrowsDurationQuestion = document.getElementById('halcrowsDurationQuestion');
+        const halcrowsDurationText = document.getElementById('halcrowsDurationText');
+
+        // Julianna Cousin Camp elements
+        const juliannaCousinCampYes = document.getElementById('juliannaCousinCampYes');
+        const juliannaCousinCampNo = document.getElementById('juliannaCousinCampNo');
+        const juliannaCousinCampYesFollowUp = document.getElementById('juliannaCousinCampYesFollowUp');
+        const juliannaCousinCampNoFollowUp = document.getElementById('juliannaCousinCampNoFollowUp');
+        const juliannaCousinCampDurationEarly = document.getElementById('juliannaCousinCampDurationEarly');
+        const juliannaFlyBackDayQuestion = document.getElementById('juliannaFlyBackDayQuestion');
+
+
+        function toggleAuntZanReturnQuestion() {
+            if (auntZanFuneralYes.checked && (auntZanLeave6th.checked || auntZanLeave7th.checked)) {
+                auntZanReturnQuestion.style.display = 'block';
+            } else {
+                auntZanReturnQuestion.style.display = 'none';
+                const returnRadios = auntZanReturnQuestion.querySelectorAll('input[type="radio"]');
+                returnRadios.forEach(radio => radio.checked = false);
+            }
+        }
+
+        function toggleAuntZanRelatedQuestions() {
+            if (auntZanFuneralYes.checked) {
+                auntZanTravelQuestion.style.display = 'block';
+                chrisMeetUpQuestion.style.display = 'none';
+                const chrisRadios = chrisMeetUpQuestion.querySelectorAll('input[type="radio"]');
+                chrisRadios.forEach(radio => radio.checked = false);
+            } else if (auntZanFuneralNo.checked) {
+                auntZanTravelQuestion.style.display = 'none';
+                const travelRadios = auntZanTravelQuestion.querySelectorAll('input[type="radio"]');
+                travelRadios.forEach(radio => radio.checked = false);
+                chrisMeetUpQuestion.style.display = 'block';
+            } else {
+                auntZanTravelQuestion.style.display = 'none';
+                chrisMeetUpQuestion.style.display = 'none';
+                const travelRadios = auntZanTravelQuestion.querySelectorAll('input[type="radio"]');
+                travelRadios.forEach(radio => radio.checked = false);
+                const chrisRadios = chrisMeetUpQuestion.querySelectorAll('input[type="radio"]');
+                chrisRadios.forEach(radio => radio.checked = false);
+            }
+            toggleAuntZanReturnQuestion();
+            toggleWeek1ConcernsQuestion();
+        }
+
+        function toggleWeek1ConcernsQuestion() {
+            if (auntZanFuneralYes.checked || auntZanFuneralNo.checked) {
+                week1ConcernsQuestion.style.display = 'block';
+            } else {
+                week1ConcernsQuestion.style.display = 'none';
+                const concernsRadios = week1ConcernsQuestion.querySelectorAll('input[type="radio"]');
+                concernsRadios.forEach(radio => radio.checked = false);
+            }
+            if (week1ConcernsYes.checked) {
+                week1ConcernsTextBox.style.display = 'block';
+            } else {
+                week1ConcernsTextBox.style.display = 'none';
+                week1ConcernsTextBox.querySelector('textarea').value = '';
+            }
+        }
+
+        function toggleMichiganTravelQuestion() {
+            // Show if "No" to Nationals AND "No" to the Knoxville/Cincinnati plan
+            if (goToNationalsNo.checked && nationalsNoResponseNo.checked) {
+                michiganTravelQuestion.style.display = 'block';
+            } else {
+                michiganTravelQuestion.style.display = 'none';
+                michiganTravelText.value = ''; // Clear text area if hidden
+            }
+        }
+
+        function toggleVanTravelQuestion() {
+            // Show if "Yes" to "Do you want to go to Nationals?"
+            if (goToNationalsYes.checked) {
+                vanTravelQuestion.style.display = 'block';
+            } else {
+                vanTravelQuestion.style.display = 'none';
+                vanTravelText.value = ''; // Clear text area if hidden
+            }
+        }
+
+        function toggleRennDurationQuestion() {
+            if (rennToCSAYes.checked) {
+                rennDurationQuestion.style.display = 'block';
+            } else {
+                rennDurationQuestion.style.display = 'none';
+                rennDurationText.value = ''; // Clear text area if hidden
+            }
+        }
+
+        function toggleHalcrowsDurationQuestion() {
+            if (halcrowsToCSAYes.checked) {
+                halcrowsDurationQuestion.style.display = 'block';
+            } else {
+                halcrowsDurationQuestion.style.display = 'none';
+                halcrowsDurationText.value = ''; // Clear text area if hidden
+            }
+        }
+
+        function toggleNationalsNoFollowUp() {
+            if (goToNationalsNo.checked) {
+                nationalsNoFollowUp.style.display = 'block';
+                vanTravelQuestion.style.display = 'none';
+                vanTravelText.value = '';
+            } else {
+                nationalsNoFollowUp.style.display = 'none';
+                const nationalsNoRadios = nationalsNoFollowUp.querySelectorAll('input[type="radio"]');
+                nationalsNoRadios.forEach(radio => radio.checked = false);
+            }
+            toggleMichiganTravelQuestion();
+            toggleVanTravelQuestion();
+        }
+
+        function toggleJuliannaCousinCampQuestions() {
+            if (juliannaCousinCampYes.checked) {
+                juliannaCousinCampYesFollowUp.style.display = 'block';
+                juliannaCousinCampNoFollowUp.style.display = 'none';
+                juliannaCousinCampNoFollowUp.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            } else if (juliannaCousinCampNo.checked) {
+                juliannaCousinCampYesFollowUp.style.display = 'none';
+                juliannaCousinCampYesFollowUp.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                juliannaCousinCampNoFollowUp.style.display = 'block';
+            } else {
+                juliannaCousinCampYesFollowUp.style.display = 'none';
+                juliannaCousinCampNoFollowUp.style.display = 'none';
+                juliannaCousinCampYesFollowUp.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                juliannaCousinCampNoFollowUp.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            }
+            toggleJuliannaFlyBackDayQuestion(); // Call this new function
+        }
+
+        function toggleJuliannaFlyBackDayQuestion() {
+            if (juliannaCousinCampDurationEarly.checked) {
+                juliannaFlyBackDayQuestion.style.display = 'block';
+            } else {
+                juliannaFlyBackDayQuestion.style.display = 'none';
+                document.getElementById('juliannaFlyBackDay').value = ''; // Clear the input
+            }
+        }
+
+
+        auntZanFuneralYes.addEventListener('change', toggleAuntZanRelatedQuestions);
+        auntZanFuneralNo.addEventListener('change', toggleAuntZanRelatedQuestions);
+
+        auntZanLeave6th.addEventListener('change', toggleAuntZanReturnQuestion);
+        auntZanLeave7th.addEventListener('change', toggleAuntZanReturnQuestion);
+
+        week1ConcernsYes.addEventListener('change', toggleWeek1ConcernsQuestion);
+        document.getElementById('week1ConcernsNo').addEventListener('change', toggleWeek1ConcernsQuestion);
+
+        goToNationalsYes.addEventListener('change', toggleNationalsNoFollowUp);
+        goToNationalsNo.addEventListener('change', toggleNationalsNoFollowUp);
+
+        nationalsNoResponseYes.addEventListener('change', toggleMichiganTravelQuestion);
+        nationalsNoResponseNo.addEventListener('change', toggleMichiganTravelQuestion);
+
+        rennToCSAYes.addEventListener('change', toggleRennDurationQuestion);
+        rennToCSANo.addEventListener('change', toggleRennDurationQuestion);
+
+        halcrowsToCSAYes.addEventListener('change', toggleHalcrowsDurationQuestion);
+        halcrowsToCSANo.addEventListener('change', toggleHalcrowsDurationQuestion);
+
+        // Julianna Cousin Camp event listeners
+        juliannaCousinCampYes.addEventListener('change', toggleJuliannaCousinCampQuestions);
+        juliannaCousinCampNo.addEventListener('change', toggleJuliannaCousinCampQuestions);
+        juliannaCousinCampDurationEarly.addEventListener('change', toggleJuliannaFlyBackDayQuestion);
+
+
+        // Initial checks
+        toggleAuntZanRelatedQuestions();
+        toggleWeek1ConcernsQuestion();
+        toggleNationalsNoFollowUp();
+        toggleMichiganTravelQuestion();
+        toggleVanTravelQuestion();
+        toggleRennDurationQuestion();
+        toggleHalcrowsDurationQuestion();
+        toggleJuliannaCousinCampQuestions(); // Initial check for new question
+        toggleJuliannaFlyBackDayQuestion(); // Initial check for the new fly back day question
+    </script>
+</body>
+</html>
